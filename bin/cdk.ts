@@ -2,6 +2,7 @@
 import type { Environment } from 'aws-cdk-lib'
 import * as cdk from 'aws-cdk-lib'
 
+import EmailReceivingStack from '../lib/EmailReceivingStack'
 import { Env, ProdExportNames, UatExportNames } from '../lib/Env'
 import HostedZoneStack from '../lib/HostedZoneStack'
 
@@ -21,5 +22,11 @@ new HostedZoneStack(app, Env.Uat, UatExportNames, {
 new HostedZoneStack(app, Env.Prod, ProdExportNames, {
   stackName: 'XLearningHostedZoneStackProd',
   description: 'This stack includes resources needed to create the hosted zone into this environment',
+  env
+})
+
+new EmailReceivingStack(app, ProdExportNames.hostedZoneIdExportName, {
+  stackName: 'XLearningEmailReceivingStack',
+  description: 'This stack includes resources needed to create the email receiving service into this environment',
   env
 })

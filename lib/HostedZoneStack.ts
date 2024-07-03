@@ -1,6 +1,6 @@
 import * as cdk from 'aws-cdk-lib'
 import { CfnOutput } from 'aws-cdk-lib'
-import type { HostedZone } from 'aws-cdk-lib/aws-route53'
+import type { HostedZone, IPublicHostedZone } from 'aws-cdk-lib/aws-route53'
 import { PublicHostedZone } from 'aws-cdk-lib/aws-route53'
 import type { Construct } from 'constructs'
 
@@ -17,6 +17,14 @@ class HostedZoneStack extends cdk.Stack {
     super(scope, props.stackName, props)
     const zone = this.createHostedZone()
     this.exportHostedZoneId(zone)
+  }
+
+  static getHostedZone(stack: cdk.Stack, env: Env, outputs: { hostedZoneIdExportName: string }): IPublicHostedZone {
+    const hostedZoneId = cdk.Fn.importValue(outputs.hostedZoneIdExportName)
+    return PublicHostedZone.fromPublicHostedZoneAttributes(stack, `XLearning-HostedZone-Output-${env}`, {
+      hostedZoneId,
+      zoneName: DomainName[env]
+    })
   }
 
   private exportHostedZoneId(hostedZone: HostedZone): void {
